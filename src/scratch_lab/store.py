@@ -99,3 +99,25 @@ def size_of(path):
             if stat.S_ISREG(st.st_mode):
                 total += st.st_size
     return total
+
+
+def find(query=None):
+    """Pick one scratch: the newest, or the newest whose name matches query.
+
+    An exact name wins, then names starting with query, then names containing it.
+    """
+    scratches = all_scratches()
+    if not scratches:
+        raise StoreError(f"no scratches in {home()}")
+    if not query:
+        return scratches[0]
+    q = query.lower()
+    for test in (
+        lambda n: n == q,
+        lambda n: n.startswith(q),
+        lambda n: q in n,
+    ):
+        hits = [s for s in scratches if test(s.name.lower())]
+        if hits:
+            return hits[0]
+    raise StoreError(f"no scratch matches '{query}'")

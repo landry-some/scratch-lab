@@ -20,6 +20,9 @@ def build_parser():
 
     sub.add_parser("ls", help="list scratches, newest first (* = kept)")
 
+    p_path = sub.add_parser("path", help="print the path of the newest or a matching scratch")
+    p_path.add_argument("query", nargs="?", help="name or part of a name (default: newest)")
+
     return parser
 
 
@@ -31,6 +34,8 @@ def main(argv=None):
             print(scratch.path)
         elif args.command == "ls":
             print(commands.listing())
+        elif args.command == "path":
+            print(store.find(args.query).path)
     except (store.StoreError, templates.TemplateError) as err:
         print(f"scratch: {err}", file=sys.stderr)
         return 1
