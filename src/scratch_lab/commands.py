@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from . import store, templates
+from . import fmt, store, templates
 
 
 def new(lang, name=None, now=None):
@@ -23,3 +23,21 @@ def new(lang, name=None, now=None):
     scratch = store.Scratch(name=name, path=dest, lang=lang, created=now)
     store.write_meta(scratch)
     return scratch
+
+
+def listing(now=None):
+    """The `scratch ls` table as text, or a hint if there are no scratches."""
+    now = now or datetime.now()
+    scratches = store.all_scratches()
+    if not scratches:
+        return f"no scratches in {store.home()} yet (try: scratch new python)"
+    rows = [("", "NAME", "LANG", "AGE", "SIZE")]
+    for s in scratches:
+        rows.append((
+            "*" if s.keep else "",
+            s.name,
+            s.lang,
+            fmt.age((now - s.created).total_seconds()),
+            fmt.size(store.size_of(s.path)),
+        ))
+    return fmt.table(rows)

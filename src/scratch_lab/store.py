@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import stat
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -69,3 +70,32 @@ def read(path):
         )
     except (OSError, ValueError, KeyError, TypeError):
         return None
+
+
+def all_scratches():
+    """Every scratch under home(), newest first. Folders without metadata are skipped."""
+    root = home()
+    if not root.is_dir():
+        return []
+    found = []
+    for path in root.iterdir():
+        if path.is_dir() and not path.is_symlink():
+            scratch = read(path)
+            if scratch is not None:
+                found.append(scratch)
+    found.sort(key=lambda s: (s.created, s.name), reverse=True)
+    return found
+
+
+def size_of(path):
+    """Total bytes of the regular files below path, not following symlinks."""
+    total = 0
+    for dirpath, _dirs, files in os.walk(path):
+        for f in files:
+            try:
+                st = os.lstat(os.path.join(dirpath, f))
+            except OSError:
+                continue
+            if stat.S_ISREG(st.st_mode):
+                total += st.st_size
+    return total

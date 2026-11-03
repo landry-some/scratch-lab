@@ -18,6 +18,8 @@ def build_parser():
     p_new.add_argument("lang", help="template language, e.g. python, rust, go, js, sh, c")
     p_new.add_argument("name", nargs="?", help="folder name (default: <lang>-<date-time>)")
 
+    sub.add_parser("ls", help="list scratches, newest first (* = kept)")
+
     return parser
 
 
@@ -27,6 +29,8 @@ def main(argv=None):
         if args.command == "new":
             scratch = commands.new(args.lang, args.name)
             print(scratch.path)
+        elif args.command == "ls":
+            print(commands.listing())
     except (store.StoreError, templates.TemplateError) as err:
         print(f"scratch: {err}", file=sys.stderr)
         return 1
