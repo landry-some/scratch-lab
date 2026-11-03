@@ -1,7 +1,7 @@
 # Roadmap
 
 v0.1 covers `new`, `ls`, `path`, `keep`/`unkeep`, `clean` and user templates.
-Everything below is planned follow-up work. Total estimate: **27.5 h**.
+Everything below is planned follow-up work. Total estimate: **27 h**.
 
 ## Features
 
@@ -13,23 +13,21 @@ Everything below is planned follow-up work. Total estimate: **27.5 h**.
 - [ ] `scratch note <query> "text"`: one-line note per scratch, shown in `ls` (1.5 h)
 - [ ] `scratch new --from <file>`: start a scratch from an existing file (1 h)
 - [ ] Template variables beyond `{{name}}`: `{{date}}`, `{{lang}}` (1 h)
+- [ ] `scratch mv <old> <new>`: rename a scratch and update the name inside
+      `Cargo.toml`, `go.mod` and `package.json` (2 h)
 - [ ] Shell completion for bash and zsh, including scratch names (2.5 h)
 
 ## Bugs and edge cases
 
 - [ ] Handle scratch folders created or renamed by hand (no metadata file) in `ls`
       and `clean` (1.5 h)
-- [ ] Refuse names with path separators or `..`, with a clear message (0.5 h)
 - [ ] `clean` on symlinked scratch folders and read-only files (1.5 h)
-- [ ] Make default names unique when two scratches are made in the same second (0.5 h)
 - [ ] Windows paths and `%USERPROFILE%` as the default home (2 h)
 
 ## Refactors
 
 - [ ] Move the metadata file read/write into one small store module with a version
       field, so the format can change later (1.5 h)
-- [ ] Split CLI argument parsing from command logic so commands return data
-      and printing happens in one place (1.5 h)
 
 ## Tests
 
