@@ -1,5 +1,6 @@
 """The work behind each subcommand, separate from argument parsing."""
 
+import shutil
 from datetime import datetime
 
 from . import fmt, store, templates
@@ -41,3 +42,26 @@ def listing(now=None):
             fmt.size(store.size_of(s.path)),
         ))
     return fmt.table(rows)
+
+
+def set_keep(query, keep):
+    """Mark a scratch as kept (clean skips it) or not, and return it."""
+    scratch = store.find(query)
+    scratch.keep = keep
+    store.write_meta(scratch)
+    return scratch
+
+
+def stale(older, now=None):
+    """Scratches that are not kept and were created more than `older` ago."""
+    now = now or datetime.now()
+    return [s for s in store.all_scratches() if not s.keep and now - s.created > older]
+
+
+def clean(older, really, now=None):
+    """Remove stale scratches if really is True. Returns the affected scratches."""
+    victims = stale(older, now)
+    if really:
+        for s in victims:
+            shutil.rmtree(s.path)
+    return victims

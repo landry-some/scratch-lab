@@ -1,4 +1,7 @@
-"""Small helpers for human-readable output."""
+"""Small helpers for human-readable input and output."""
+
+import re
+from datetime import timedelta
 
 
 def age(seconds):
@@ -28,3 +31,14 @@ def table(rows):
     widths = [max(len(row[i]) for row in rows) for i in range(len(rows[0]))]
     lines = ["  ".join(cell.ljust(w) for cell, w in zip(row, widths)).rstrip() for row in rows]
     return "\n".join(lines)
+
+
+DURATION_UNITS = {"m": "minutes", "h": "hours", "d": "days", "w": "weeks"}
+
+
+def parse_duration(text):
+    """'30m', '12h', '14d', '2w' -> timedelta. Raises ValueError otherwise."""
+    m = re.fullmatch(r"(\d+)([mhdw])", text.strip().lower())
+    if not m:
+        raise ValueError(f"bad duration '{text}': use a number and m, h, d or w, e.g. 14d")
+    return timedelta(**{DURATION_UNITS[m.group(2)]: int(m.group(1))})
