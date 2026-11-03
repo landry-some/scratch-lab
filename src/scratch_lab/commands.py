@@ -10,7 +10,7 @@ def new(lang, name=None, now=None):
     """Create a scratch from the language's template and return it."""
     template = templates.find(lang)
     lang = template.name
-    now = now or datetime.now().replace(microsecond=0)
+    now = now or datetime.now()
     root = store.home()
     root.mkdir(parents=True, exist_ok=True)
     if name is None:

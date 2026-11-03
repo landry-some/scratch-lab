@@ -51,7 +51,9 @@ def default_name(lang, now, root):
 def write_meta(scratch):
     data = {
         "lang": scratch.lang,
-        "created": scratch.created.isoformat(timespec="seconds"),
+        "created": scratch.created.isoformat(
+            timespec="microseconds" if scratch.created.microsecond else "seconds"
+        ),
         "keep": scratch.keep,
     }
     (scratch.path / META_FILE).write_text(json.dumps(data, indent=2) + "\n")
