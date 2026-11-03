@@ -1,5 +1,6 @@
 """Find language templates and copy them into a new scratch folder."""
 
+import os
 from pathlib import Path
 
 BUILTIN_DIR = Path(__file__).parent / "templates"
@@ -24,18 +25,32 @@ def canonical(lang):
     return ALIASES.get(lang, lang)
 
 
+def user_dir():
+    """$XDG_CONFIG_HOME/scratch-lab/templates, or ~/.config/scratch-lab/templates."""
+    config = os.environ.get("XDG_CONFIG_HOME")
+    base = Path(config).expanduser() if config else Path.home() / ".config"
+    return base / "scratch-lab" / "templates"
+
+
 def template_dirs():
-    """Folders that hold one subfolder per language."""
-    return [BUILTIN_DIR]
+    """Folders that hold one subfolder per language. Earlier ones win."""
+    return [user_dir(), BUILTIN_DIR]
+
+
+def sources():
+    """[(language, template folder)] for every usable template, sorted by language."""
+    found = {}
+    for base in template_dirs():
+        if base.is_dir():
+            for p in base.iterdir():
+                if p.is_dir():
+                    found.setdefault(p.name, p)
+    return sorted(found.items())
 
 
 def available():
     """Sorted names of every language that has a template."""
-    names = set()
-    for base in template_dirs():
-        if base.is_dir():
-            names.update(p.name for p in base.iterdir() if p.is_dir())
-    return sorted(names)
+    return [name for name, _ in sources()]
 
 
 def find(lang):

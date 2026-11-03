@@ -33,6 +33,8 @@ def build_parser():
     p_clean.add_argument("--yes", action="store_true",
                          help="really delete; without it the list is only printed")
 
+    sub.add_parser("templates", help="list templates and the folder each comes from")
+
     return parser
 
 
@@ -63,6 +65,12 @@ def main(argv=None):
         elif args.command in ("keep", "unkeep"):
             scratch = commands.set_keep(args.query, args.command == "keep")
             print(f"{'kept' if scratch.keep else 'no longer kept'}: {scratch.name}")
+        elif args.command == "templates":
+            print(fmt.table([
+                (name, "built-in" if path.parent == templates.BUILTIN_DIR else str(path))
+                for name, path in templates.sources()
+            ]))
+            print(f"\nadd your own in {templates.user_dir()}/<lang>/")
         elif args.command == "clean":
             return run_clean(args)
     except (store.StoreError, templates.TemplateError, ValueError) as err:
