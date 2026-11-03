@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scratch-lab"
+version = "0.1.0"
+description = "Make throwaway code playgrounds from templates and clean them up later"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "landry-some" }]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+scratch = "scratch_lab.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+scratch_lab = ["templates/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
