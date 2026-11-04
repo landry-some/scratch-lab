@@ -29,6 +29,10 @@ def build_parser():
         p_keep = sub.add_parser(name, help=text)
         p_keep.add_argument("query", nargs="?", help="name or part of a name (default: newest)")
 
+    p_note = sub.add_parser("note", help="set a one-line note shown in ls")
+    p_note.add_argument("query", help="name or part of a name")
+    p_note.add_argument("text", help='the note; "" removes it')
+
     p_clean = sub.add_parser("clean", help="remove old scratches that are not kept")
     p_clean.add_argument("--older", default="14d", metavar="AGE",
                          help="only scratches older than this, e.g. 12h, 14d, 2w (default: 14d)")
@@ -69,6 +73,9 @@ def main(argv=None):
         elif args.command in ("keep", "unkeep"):
             scratch = commands.set_keep(args.query, args.command == "keep")
             print(f"{'kept' if scratch.keep else 'no longer kept'}: {scratch.name}")
+        elif args.command == "note":
+            scratch = commands.set_note(args.query, args.text)
+            print(f"{'noted' if scratch.note else 'note removed'}: {scratch.name}")
         elif args.command == "templates":
             print(fmt.table([
                 (name, "built-in" if path.parent == templates.BUILTIN_DIR else str(path))

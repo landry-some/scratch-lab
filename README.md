@@ -34,6 +34,7 @@ scratch path                     # path of the newest scratch
 cd "$(scratch path regex)"       # path of the best name match
 scratch keep regex-try           # protect it from clean
 scratch unkeep regex-try
+scratch note regex "lookbehind"  # one-line note shown in ls ("" removes it)
 scratch clean                    # list unkept scratches older than 14 days
 scratch clean --older 3d --yes   # really delete those older than 3 days
 scratch templates                # which templates exist and where they come from
@@ -42,26 +43,28 @@ scratch templates                # which templates exist and where they come fro
 Example `scratch ls` output (`*` marks kept scratches):
 
 ```
-   NAME                  LANG    AGE  SIZE
+   NAME                  LANG    AGE  SIZE   NOTE
    go-20261103-140212    go      2m   190B
-*  regex-try             python  3d   1.2K
+*  regex-try             python  3d   1.2K   lookbehind
    rust-20261021-091500  rust    13d  48.3M
 ```
+
+The NOTE column only shows up once some scratch has a note.
 
 ### Where things live
 
 - Scratches go in `$SCRATCH_HOME`, or `~/scratch` if it isn't set. Each one is a
-  plain folder with a small `.scratch.json` file holding its language, creation time
-  and kept flag. `ls`, `path` and `clean` ignore folders without that file, so
+  plain folder with a small `.scratch.json` file holding its language, creation time,
+  kept flag and note. `ls`, `path` and `clean` ignore folders without that file, so
   nothing you put there by hand is ever deleted.
 - `new --open` prints the path, then runs `$VISUAL` (or `$EDITOR` if that is unset)
   with the scratch folder as argument and working directory, and exits with the
   editor's exit code.
 - `clean` only prints what it would delete unless you pass `--yes`. `--older` takes
   a number with `m`, `h`, `d` or `w` (minutes, hours, days, weeks).
-- `path`, `keep` and `unkeep` take part of a name. An exact name wins, then names
-  that start with it, then names that contain it, newest first. With no name they
-  use the newest scratch.
+- `path`, `keep`, `unkeep` and `note` take part of a name. An exact name wins, then names
+  that start with it, then names that contain it, newest first. With no name `path`,
+  `keep` and `unkeep` use the newest scratch.
 
 ### Templates
 

@@ -23,6 +23,7 @@ class Scratch:
     lang: str
     created: datetime
     keep: bool = False
+    note: str = ""
 
 
 def home():
@@ -56,6 +57,8 @@ def write_meta(scratch):
         ),
         "keep": scratch.keep,
     }
+    if scratch.note:
+        data["note"] = scratch.note
     (scratch.path / META_FILE).write_text(json.dumps(data, indent=2) + "\n")
 
 
@@ -69,6 +72,7 @@ def read(path):
             lang=data["lang"],
             created=datetime.fromisoformat(data["created"]),
             keep=bool(data.get("keep", False)),
+            note=str(data.get("note", "")),
         )
     except (OSError, ValueError, KeyError, TypeError):
         return None

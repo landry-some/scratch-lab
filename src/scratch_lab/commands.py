@@ -47,15 +47,17 @@ def listing(now=None):
     scratches = store.all_scratches()
     if not scratches:
         return f"no scratches in {store.home()} yet (try: scratch new python)"
-    rows = [("", "NAME", "LANG", "AGE", "SIZE")]
+    notes = any(s.note for s in scratches)
+    rows = [("", "NAME", "LANG", "AGE", "SIZE") + (("NOTE",) if notes else ())]
     for s in scratches:
-        rows.append((
+        row = (
             "*" if s.keep else "",
             s.name,
             s.lang,
             fmt.age((now - s.created).total_seconds()),
             fmt.size(store.size_of(s.path)),
-        ))
+        )
+        rows.append(row + ((s.note,) if notes else ()))
     return fmt.table(rows)
 
 
@@ -63,6 +65,14 @@ def set_keep(query, keep):
     """Mark a scratch as kept (clean skips it) or not, and return it."""
     scratch = store.find(query)
     scratch.keep = keep
+    store.write_meta(scratch)
+    return scratch
+
+
+def set_note(query, text):
+    """Give a scratch a one-line note (empty text removes it) and return it."""
+    scratch = store.find(query)
+    scratch.note = " ".join(text.split())
     store.write_meta(scratch)
     return scratch
 
