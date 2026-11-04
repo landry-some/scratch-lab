@@ -76,3 +76,47 @@ def test_cli_new_error_goes_to_stderr(scratch_home, capsys):
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err.startswith("scratch: no template for 'cobol'")
+
+
+def fake_editor(tmp_path, code=0):
+    """An executable that records its cwd and arguments, then exits with code."""
+    script = tmp_path / "fake-editor"
+    log = tmp_path / "editor.log"
+    script.write_text(f'#!/bin/sh\necho "$PWD|$*" > "{log}"\nexit {code}\n')
+    script.chmod(0o755)
+    return script, log
+
+
+def test_cli_new_open_starts_editor_in_scratch(scratch_home, tmp_path, monkeypatch, capsys):
+    script, log = fake_editor(tmp_path)
+    monkeypatch.delenv("VISUAL", raising=False)
+    monkeypatch.setenv("EDITOR", f"{script} --wait")
+    assert cli.main(["new", "python", "edited", "--open"]) == 0
+    path = scratch_home / "edited"
+    assert capsys.readouterr().out.strip() == str(path)
+    assert log.read_text().strip() == f"{path}|--wait {path}"
+
+
+def test_visual_wins_over_editor_and_exit_code_is_passed_on(scratch_home, tmp_path, monkeypatch):
+    script, log = fake_editor(tmp_path, code=3)
+    monkeypatch.setenv("VISUAL", str(script))
+    monkeypatch.setenv("EDITOR", "/nonexistent/editor")
+    assert cli.main(["new", "go", "vis", "--open"]) == 3
+    assert log.exists()
+
+
+def test_open_without_editor_keeps_scratch_and_explains(scratch_home, monkeypatch, capsys):
+    monkeypatch.delenv("VISUAL", raising=False)
+    monkeypatch.delenv("EDITOR", raising=False)
+    assert cli.main(["new", "c", "plain", "--open"]) == 1
+    captured = capsys.readouterr()
+    assert captured.out.strip() == str(scratch_home / "plain")
+    assert "set $VISUAL or $EDITOR" in captured.err
+    assert (scratch_home / "plain").is_dir()
+
+
+def test_open_with_missing_editor_is_an_error(scratch_home, monkeypatch, capsys):
+    monkeypatch.delenv("VISUAL", raising=False)
+    monkeypatch.setenv("EDITOR", "/nonexistent/editor")
+    assert cli.main(["new", "sh", "missing", "--open"]) == 1
+    assert "editor not found: /nonexistent/editor" in capsys.readouterr().err

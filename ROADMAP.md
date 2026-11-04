@@ -5,7 +5,7 @@ Everything below is planned follow-up work. Total estimate: **27 h**.
 
 ## Features
 
-- [ ] `scratch new --open`: start `$EDITOR` (or `$VISUAL`) in the new scratch (1.5 h)
+- [x] `scratch new --open`: start `$EDITOR` (or `$VISUAL`) in the new scratch (1.5 h)
 - [ ] `scratch run [query]`: run the scratch with a per-language command
       (`python main.py`, `cargo run`, `go run .`, ...) set in the template (3 h)
 - [ ] `scratch promote <query> <dest>`: move a scratch out into a real project folder

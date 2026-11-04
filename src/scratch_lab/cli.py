@@ -17,6 +17,8 @@ def build_parser():
     p_new = sub.add_parser("new", help="make a scratch from a template, print its path")
     p_new.add_argument("lang", help="template language, e.g. python, rust, go, js, sh, c")
     p_new.add_argument("name", nargs="?", help="folder name (default: <lang>-<date-time>)")
+    p_new.add_argument("--open", action="store_true",
+                       help="start $VISUAL or $EDITOR in the new scratch")
 
     sub.add_parser("ls", help="list scratches, newest first (* = kept)")
 
@@ -57,7 +59,9 @@ def main(argv=None):
     try:
         if args.command == "new":
             scratch = commands.new(args.lang, args.name)
-            print(scratch.path)
+            print(scratch.path, flush=True)
+            if args.open:
+                return commands.open_editor(scratch.path)
         elif args.command == "ls":
             print(commands.listing())
         elif args.command == "path":

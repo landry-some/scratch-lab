@@ -28,6 +28,7 @@ pip install -e .
 scratch new rust                 # ~/scratch/rust-20261103-140509, path printed
 scratch new py regex-try         # pick the folder name yourself
 cd "$(scratch new go)"           # make one and jump into it
+scratch new c --open             # make one and start $VISUAL or $EDITOR in it
 scratch ls                       # all scratches, newest first
 scratch path                     # path of the newest scratch
 cd "$(scratch path regex)"       # path of the best name match
@@ -53,6 +54,9 @@ Example `scratch ls` output (`*` marks kept scratches):
   plain folder with a small `.scratch.json` file holding its language, creation time
   and kept flag. `ls`, `path` and `clean` ignore folders without that file, so
   nothing you put there by hand is ever deleted.
+- `new --open` prints the path, then runs `$VISUAL` (or `$EDITOR` if that is unset)
+  with the scratch folder as argument and working directory, and exits with the
+  editor's exit code.
 - `clean` only prints what it would delete unless you pass `--yes`. `--older` takes
   a number with `m`, `h`, `d` or `w` (minutes, hours, days, weeks).
 - `path`, `keep` and `unkeep` take part of a name. An exact name wins, then names

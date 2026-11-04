@@ -1,6 +1,9 @@
 """The work behind each subcommand, separate from argument parsing."""
 
+import os
+import shlex
 import shutil
+import subprocess
 from datetime import datetime
 
 from . import fmt, store, templates
@@ -24,6 +27,18 @@ def new(lang, name=None, now=None):
     scratch = store.Scratch(name=name, path=dest, lang=lang, created=now)
     store.write_meta(scratch)
     return scratch
+
+
+def open_editor(path):
+    """Start $VISUAL (or $EDITOR) on path from inside it and wait. Returns its exit code."""
+    editor = os.environ.get("VISUAL") or os.environ.get("EDITOR")
+    if not editor:
+        raise store.StoreError("set $VISUAL or $EDITOR to use --open")
+    cmd = shlex.split(editor) + [str(path)]
+    try:
+        return subprocess.run(cmd, cwd=path).returncode
+    except FileNotFoundError:
+        raise store.StoreError(f"editor not found: {cmd[0]}") from None
 
 
 def listing(now=None):
