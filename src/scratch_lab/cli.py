@@ -33,6 +33,10 @@ def build_parser():
     p_note.add_argument("query", help="name or part of a name")
     p_note.add_argument("text", help='the note; "" removes it')
 
+    p_promote = sub.add_parser("promote", help="move a scratch out into a real project folder")
+    p_promote.add_argument("query", help="name or part of a name")
+    p_promote.add_argument("dest", help="new path, or an existing folder to move it into")
+
     p_clean = sub.add_parser("clean", help="remove old scratches that are not kept")
     p_clean.add_argument("--older", default="14d", metavar="AGE",
                          help="only scratches older than this, e.g. 12h, 14d, 2w (default: 14d)")
@@ -76,6 +80,8 @@ def main(argv=None):
         elif args.command == "note":
             scratch = commands.set_note(args.query, args.text)
             print(f"{'noted' if scratch.note else 'note removed'}: {scratch.name}")
+        elif args.command == "promote":
+            print(commands.promote(args.query, args.dest))
         elif args.command == "templates":
             print(fmt.table([
                 (name, "built-in" if path.parent == templates.BUILTIN_DIR else str(path))

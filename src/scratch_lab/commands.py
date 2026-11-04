@@ -5,6 +5,7 @@ import shlex
 import shutil
 import subprocess
 from datetime import datetime
+from pathlib import Path
 
 from . import fmt, store, templates
 
@@ -75,6 +76,26 @@ def set_note(query, text):
     scratch.note = " ".join(text.split())
     store.write_meta(scratch)
     return scratch
+
+
+def promote(query, dest):
+    """Move a scratch to dest (or into dest if it is a folder) and drop its metadata.
+
+    Returns the new path. After this it is a plain folder, no longer a scratch.
+    """
+    scratch = store.find(query)
+    dest = Path(dest).expanduser().absolute()
+    if dest.is_dir():
+        dest = dest / scratch.name
+    if dest.exists():
+        raise store.StoreError(f"{dest} already exists")
+    if not dest.parent.is_dir():
+        raise store.StoreError(f"folder {dest.parent} does not exist")
+    if dest.is_relative_to(scratch.path.absolute()):
+        raise store.StoreError(f"cannot move {scratch.name} into itself")
+    shutil.move(scratch.path, dest)
+    (dest / store.META_FILE).unlink(missing_ok=True)
+    return dest
 
 
 def stale(older, now=None):

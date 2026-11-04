@@ -8,7 +8,7 @@ Everything below is planned follow-up work. Total estimate: **27 h**.
 - [x] `scratch new --open`: start `$EDITOR` (or `$VISUAL`) in the new scratch (1.5 h)
 - [ ] `scratch run [query]`: run the scratch with a per-language command
       (`python main.py`, `cargo run`, `go run .`, ...) set in the template (3 h)
-- [ ] `scratch promote <query> <dest>`: move a scratch out into a real project folder
+- [x] `scratch promote <query> <dest>`: move a scratch out into a real project folder
       and drop its metadata (2 h)
 - [x] `scratch note <query> "text"`: one-line note per scratch, shown in `ls` (1.5 h)
 - [ ] `scratch new --from <file>`: start a scratch from an existing file (1 h)

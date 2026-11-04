@@ -35,6 +35,7 @@ cd "$(scratch path regex)"       # path of the best name match
 scratch keep regex-try           # protect it from clean
 scratch unkeep regex-try
 scratch note regex "lookbehind"  # one-line note shown in ls ("" removes it)
+scratch promote regex ~/code     # move it to ~/code/regex-try, no longer a scratch
 scratch clean                    # list unkept scratches older than 14 days
 scratch clean --older 3d --yes   # really delete those older than 3 days
 scratch templates                # which templates exist and where they come from
@@ -60,9 +61,11 @@ The NOTE column only shows up once some scratch has a note.
 - `new --open` prints the path, then runs `$VISUAL` (or `$EDITOR` if that is unset)
   with the scratch folder as argument and working directory, and exits with the
   editor's exit code.
+- `promote <name> <dest>` moves a scratch to `dest`, or into `dest` if that is an
+  existing folder, and removes its `.scratch.json`. It never overwrites anything.
 - `clean` only prints what it would delete unless you pass `--yes`. `--older` takes
   a number with `m`, `h`, `d` or `w` (minutes, hours, days, weeks).
-- `path`, `keep`, `unkeep` and `note` take part of a name. An exact name wins, then names
+- `path`, `keep`, `unkeep`, `note` and `promote` take part of a name. An exact name wins, then names
   that start with it, then names that contain it, newest first. With no name `path`,
   `keep` and `unkeep` use the newest scratch.
 
