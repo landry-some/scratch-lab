@@ -12,7 +12,7 @@ Everything below is planned follow-up work. Total estimate: **27 h**.
       and drop its metadata (2 h)
 - [ ] `scratch note <query> "text"`: one-line note per scratch, shown in `ls` (1.5 h)
 - [ ] `scratch new --from <file>`: start a scratch from an existing file (1 h)
-- [ ] Template variables beyond `{{name}}`: `{{date}}`, `{{lang}}` (1 h)
+- [x] Template variables beyond `{{name}}`: `{{date}}`, `{{lang}}` (1 h)
 - [ ] `scratch mv <old> <new>`: rename a scratch and update the name inside
       `Cargo.toml`, `go.mod` and `package.json` (2 h)
 - [ ] Shell completion for bash and zsh, including scratch names (2.5 h)

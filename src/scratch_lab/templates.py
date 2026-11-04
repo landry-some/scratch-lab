@@ -65,8 +65,15 @@ def find(lang):
     )
 
 
-def render(template, dest, name):
-    """Copy a template folder into dest, filling in {{name}} in text files."""
+def fill(text, values):
+    """Replace {{key}} with values[key] for every key; other braces are left alone."""
+    for key, value in values.items():
+        text = text.replace("{{" + key + "}}", value)
+    return text
+
+
+def render(template, dest, values):
+    """Copy a template folder into dest, filling in {{name}}, {{lang}}, ... in text files."""
     for src in sorted(template.rglob("*")):
         if "__pycache__" in src.parts:
             continue
@@ -81,7 +88,7 @@ def render(template, dest, name):
         except UnicodeDecodeError:
             target.write_bytes(data)
         else:
-            target.write_text(text.replace("{{name}}", name), encoding="utf-8")
+            target.write_text(fill(text, values), encoding="utf-8")
         mode = src.stat().st_mode & 0o777
         if src.suffix == ".sh":
             mode |= 0o111

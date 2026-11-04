@@ -54,3 +54,15 @@ def test_cli_templates_shows_sources(scratch_home, capsys):
     assert f"python  {root}" in out
     assert "rust    built-in" in out
     assert str(templates.user_dir()) in out
+
+
+def test_date_and_lang_variables_are_filled(scratch_home):
+    make_user_template("notes", {"README.md": "# {{name}} ({{lang}}, {{date}})\n{{other}}\n"})
+    scratch = commands.new("notes", "vars", now=NOW)
+    assert (scratch.path / "README.md").read_text() == "# vars (notes, 2026-11-03)\n{{other}}\n"
+
+
+def test_lang_variable_uses_the_canonical_name(scratch_home):
+    make_user_template("python", {"main.py": "# {{lang}}\n"})
+    scratch = commands.new("py", "alias", now=NOW)
+    assert (scratch.path / "main.py").read_text() == "# python\n"

@@ -20,7 +20,7 @@ def new(lang, name=None, now=None):
     if dest.exists():
         raise store.StoreError(f"scratch '{name}' already exists: {dest}")
     dest.mkdir()
-    templates.render(template, dest, name)
+    templates.render(template, dest, {"name": name, "lang": lang, "date": f"{now:%Y-%m-%d}"})
     scratch = store.Scratch(name=name, path=dest, lang=lang, created=now)
     store.write_meta(scratch)
     return scratch

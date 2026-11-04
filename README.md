@@ -62,9 +62,12 @@ Example `scratch ls` output (`*` marks kept scratches):
 ### Templates
 
 Built in: `python` (`py`), `rust` (`rs`), `go`, `js` (`node`), `sh` (`bash`) and `c`.
-Each is a minimal "hello" program, and `{{name}}` in any text file is replaced with
-the scratch's name (used for the package name in `Cargo.toml`, `go.mod` and
-`package.json`).
+Each is a minimal "hello" program. In any text file of a template these are filled in:
+
+- `{{name}}`: the scratch's name (used for the package name in `Cargo.toml`,
+  `go.mod` and `package.json`)
+- `{{lang}}`: the template's language, e.g. `python` even for `scratch new py`
+- `{{date}}`: the creation date as `YYYY-MM-DD`
 
 To add a language or replace a built-in one, make a folder
 `~/.config/scratch-lab/templates/<lang>/` (or under `$XDG_CONFIG_HOME`) with the
